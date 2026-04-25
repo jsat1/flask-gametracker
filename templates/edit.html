@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='end.css') }}">
+        <title>Edit Game</title>
+    </head>
+    <body>
+        <h1>Edit Game</h1>
+        <form method="POST" action="/update">
+            <input type="hidden" name="game_id" value="{{ game[0] }}">
+            <input type="text" name="game" value="{{ game[1] }}" readonly>
+            <input type="text" name="genre" value="{{ game[2] }}"readonly>
+            <select name="status">
+                <option value="Want" {% if game[3] == "Want" %}selected{% endif %}>Want</option>
+                <option value="Playing" {% if game[3] == "Playing" %}selected{% endif %}>Playing</option>
+                <option value="Played" {% if game[3] == "Played" %}selected{% endif %}>Played</option>
+            </select>
+            <input type="number" step="0.1" name="rating" value="{{ game[4] }}">
+            <button type="submit">Update Game</button>
+        </form>
+        <a href="/">Cancel</a>
+    </body>
+</html>

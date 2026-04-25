@@ -1,0 +1,277 @@
+------------------------beginning-------------------------------------------
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GameTracker</title> # what shows in the tab
+        <link rel="stylesheet" href="{{ url_for('static', filename='begining.css') }}">
+        #how flask locates your static folder and file name
+    </head>
+    <body>
+---------------------------background--------------------------------------------
+body {
+    background-color: #1a1a2e;
+
+    color: white; #text color
+
+    max-width: 800px;#sets a ceiling on how wide
+
+    margin: 0 auto;#margin controls up to 4 values — top, right, bottom, left.
+    #0 - top and bottom margins are 0
+    #auto - left and right are automatically 0
+
+    padding: 20px;#space inside the element
+
+    font-family: Arial, sans-serif;
+}
+-----------------------header1--------------------------------------------------------
+h1 {
+    text-align: center;
+    color: #e94560;
+    letter-spacing: 1px;
+}
+-------------creating containers------------------------------------------------------
+.search-section,
+
+ <div class="search-section">
+            <h2>Search IGDB</h2>
+            <form method="GET" action="/search">
+                <input type="text" name="query" placeholder="Search for a game...">
+                <button type="submit">Search</button>
+            </form>
+
+.add-section,
+
+<div class="add-section">
+            <h2>Add Game Manually</h2>
+            <form method="POST" action="/">
+                <input type="text" name="game" placeholder="Game title">
+                <input type="text" name="genre" placeholder="Genre">
+                <select name="status">
+                    <option value="Want">Want</option>
+                    <option value="Playing">Playing</option>
+                    <option value="Played">Played</option>
+                </select>
+                <input type="number" step="0.1" name="rating" placeholder="Rating (1–10)">
+                <button type="submit">Add Game</button>
+            </form>
+        </div>
+
+.library-section
+
+<div class="library-section">
+            <h2>Your Library</h2>
+
+            {% for game in game_list %}
+                <div class="game-card">
+                    <div class="game-info">
+                        <p class="game-title">
+                            {{ game[1] }}
+                            {% if game[3] == "Playing" %}
+                                <span class="badge badge-playing">Playing</span>
+                            {% elif game[3] == "Played" %}
+                                <span class="badge badge-completed">Played</span>
+                            {% else %}
+                                <span class="badge badge-backlog">Want</span>
+                            {% endif %}
+                        </p>
+                        <p class="game-meta">
+                            {{ game[2] if game[2] else "Unknown genre" }}
+                            {% if game[4] %} &nbsp;·&nbsp; Rating: {{ game[4] }}/10 {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="/edit/{{ game[0] }}">
+                            <button type="button" class="btn-secondary">Edit</button>
+                        </a>
+                        <form method="POST" action="/delete" style="margin: 0;">
+                            <input type="hidden" name="game_id" value="{{ game[0] }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                </div>
+--------------------------- styling containers together------------------------------------
+.search-section,
+.add-section,
+.library-section {
+    background-color: #16213e;
+    border-radius: 10px; # making the borders rounded instead of straight edges
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    border: 1px solid #0f3460;
+    #1px - thickness of border
+    #solid - style, includes dashed dotted and none
+    ##0f3460 - color
+---------------------------------styling header2 for containers-------------------------------
+.search-section h2,
+.add-section h2,
+.library-section h2 {
+    color: #e94560;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 14px;
+    border-bottom: 1px solid #0f3460;
+    padding-bottom: 8px;
+----------------------------styling input and select-------------------------------------------------------------
+input, select { #input boxes and select boxes
+    background-color: #0f3460;
+    color: white;
+    border: 1px solid #e94560;
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+}
+input:focus, select:focus { # focus means when the user clicks into these elements
+    border-color: #5dcaa5;
+    box-shadow: 0 0 0 2px rgba(233, 69, 96, 0.25);
+    #box shadow takes 5 values
+    #0 - horizontal, shadow appears behind the element and shifted horizontally(negative px = left positive px = right)
+    #0 - vertical, positive = down and negative = up
+    #0 - blur radius, how blurry the shadow is, does not accept negative value. higher  px more blurry
+    #2px - spread radius, how far the shadow extends
+    #rgba(233, 69, 96, 0.25) - first 3 values are the color broken into rgb values, 0.25 is opacity
+    #as the first three values are 0 the spread radius becomes an outline shadow
+}
+--------------------------style buttons--------------------------------------------------------------------------
+button {
+    background-color: #e94560;
+    color: white; # text color
+    border: none;
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer; # changes the cursor to a pointer finger
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600; #control hows bold the text is. increments by 100 values within 100-900
+    letter-spacing: 0.5px;
+}
+button:hover { #when hovering over the button
+    background-color: #c73652;
+}
+-------------------------creating secondary button container------------------------------------------------
+}
+.button-secondary {
+    background: transparent;
+    border: 1px solid #e94560;
+    color: #e94560;
+}
+-------------------------styling secondary button hover-----------------------------------------------------------
+.button-secondary:hover {
+    background-color: rgba(233, 69, 96, 0.12);
+}
+-------------------------creating game card containers-----------------------------------------------------------------
+{% for game in game_list %}
+                <div class="game-card"> # creating container
+                    <div class="game-info"> #creating container
+                        <p class="game-title">
+                            {{ game[1] }}
+                            {% if game[3] == "Playing" %}
+                                <span class="badge badge-playing">Playing</span>
+                            {% elif game[3] == "Played" %}
+                                <span class="badge badge-completed">Played</span>
+                            {% else %}
+                                <span class="badge badge-backlog">Want</span>
+                            {% endif %}
+                        </p>
+                        <p class="game-meta">
+                            {{ game[2] if game[2] else "Unknown genre" }}
+                            {% if game[4] %} &nbsp;·&nbsp; Rating: {{ game[4] }}/10 {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="/edit/{{ game[0] }}">
+                            <button type="button" class="button-secondary">Edit</button>
+                        </a>
+                        <form method="POST" action="/delete" style="margin: 0;">
+                            <input type="hidden" name="game_id" value="{{ game[0] }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+-------------------------------------styling game cards-------------------------------------------------------
+.game-card {
+    background-color: #0f3460;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 8px 0;
+    display: flex; #turns the card into a flex container,
+    #meaning its direct children line up horizontally in a row by default instead of stacking vertically.
+    #all of game-card alignment attributes to div block
+    #align-items: center;
+    #justify-content: space-between;
+    #conceptually
+    #             <div class="game-card">
+    #             <div class="game-info"> is moved by align-items and justify-content
+    #             <div class="card-actions"> is moved by align-items and justify-content
+    #             </div>
+    align-items: center;
+    justify-content: space-between; #controls horizontal alignment of children/ space between first display flex and second
+    border-left: 3px solid #e94560;
+   }
+
+    .game-card .game-info {
+    flex: 1;#stretches to fill all available space
+}
+
+------------------------------creating container for genre--------------------------------------------------------------
+<p class="game-genre"> # create container using <p>
+    {{ game[2] if game[2] else "Unknown genre" }}
+    {% if game[4] %} &nbsp;·&nbsp; Rating: {{ game[4] }}/10 {% endif %}
+</p>
+
+--------------------------------styling genre---------------------------------------------------------------------------
+.game-card .game-genre {
+    font-size: 12px;
+    color: #a0a0b0;
+    margin: 0;
+}
+---------------------------------create card actions--------------------------------------------------------------------
+#these are the edit and delete buttons
+<div class="card-actions"> # card action container
+    <a href="/edit/{{ game[0] }}">
+        <button type="button" class="button-secondary">Edit</button>
+    </a>
+    <form method="POST" action="/delete" style="margin: 0;">
+        <input type="hidden" name="game_id" value="{{ game[0] }}">
+        <button type="submit">Delete</button>
+    </form>
+</div>
+_________________________________________styling card actions-----------------------------------------------------------
+.game-card .card-actions {
+    display: flex;
+    #makes card-actions its own flex container
+    #so Edit and Delete buttons line up horizontally
+    # instead of stacking vertically
+    gap: 6px; # this is the gap between the two action cards, edit and delete
+}
+---------------------------------------create badge container--------------------------------------------------------
+<p class="game-title"> # use <p> block to apply changes directly to these lines of text
+    {{ game[1] }}
+    {% if game[3] == "Playing" %}
+        <span class="badge badge-playing">Playing</span> #badge container and badge-playing created
+    {% elif game[3] == "Played" %}
+        <span class="badge badge-completed">Played</span> #badge container and badge-completed created
+    {% else %}
+        <span class="badge badge-backlog">Want</span> #badge container and badge-backlog created
+    {% endif %}
+</p>
+# each if has ability to create badge container along with its status.
+
+-----------------------------------------styling badges-----------------------------------------------------------------
+#this block just stylizes the text
+.badge {
+    display: inline-block; # means text on the same line
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+}
+# this adds color to text
+.badge-playing   { background: rgba(233, 69, 96, 0.2);  color: #ff6b81; }
+.badge-completed { background: rgba(29, 158, 117, 0.2); color: #5dcaa5; }
+.badge-backlog   { background: rgba(136, 135, 128, 0.2); color: #b4b2a9; }
+

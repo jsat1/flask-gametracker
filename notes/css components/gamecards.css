@@ -1,0 +1,42 @@
+.game-card {
+    background-color: #0f3460;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 8px 0;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    border-left: 3px solid #e94560;
+    }
+.game-card .game-info {
+    flex: 1;
+}
+.game-card .game-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin: 0 0 4px;
+}
+
+.game-card .game-genre {
+    font-size: 12px;
+    color: #a0a0b0;
+    margin: 0;
+}
+.game-card .card-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+}
+.badge-playing   { background: rgba(233, 69, 96, 0.2);  color: #ff6b81; }
+.badge-completed { background: rgba(29, 158, 117, 0.2); color: #5dcaa5; }
+.badge-backlog   { background: rgba(136, 135, 128, 0.2); color: #b4b2a9; }
+
+

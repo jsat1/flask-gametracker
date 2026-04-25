@@ -1,0 +1,23 @@
+button {
+    background-color: #e94560;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+button:hover {
+    background-color: #c73652;
+}
+.button-secondary {
+    background: transparent;
+    border: 1px solid #e94560;
+    color: #e94560;
+}
+.button-secondary:hover {
+    background-color: rgba(233, 69, 96, 0.12);
+}

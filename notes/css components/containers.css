@@ -1,0 +1,21 @@
+.search-section,
+.add-section,
+.library-section {
+    background-color: #16213e;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    border: 1px solid #0f3460;
+    }
+
+.search-section h2,
+.add-section h2,
+.library-section h2 {
+    color: #e94560;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 14px;
+    border-bottom: 1px solid #0f3460;
+    padding-bottom: 8px;
+    }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GameTracker</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='end.css') }}">
+    </head>
+    <body>
+        <h1>GameTracker</h1>
+        <p class="subtitle">your personal game library</p>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <h2>Search IGDB</h2>
+            <form method="GET" action="/search">
+                <input type="text" name="query" placeholder="Search for a game...">
+                <button type="submit">Search</button>
+            </form>
+
+            {% if error %}
+                <p style="color: #ff6b81; margin-top: 10px;">{{ error }}</p>
+            {% endif %}
+
+            {% if results %}
+                <div style="margin-top: 14px;">
+                    {% for game in results %}
+                        <div class="game-card"
+                             onclick="autofill('{{ game.name }}', '{{ game.genres[0].name if game.genres else '' }}')"
+                             style="cursor: pointer;">
+                            <div class="game-info">
+                                <p class="game-title">{{ game.name }}</p>
+                                <p class="game-genre">{{ game.genres[0].name if game.genres else "Unknown genre" }}</p>
+                            </div>
+                            <div class="card-actions">
+                                <button type="button">+ Add</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Add Game Section -->
+        <div class="add-section">
+            <h2>Add Game Manually</h2>
+            <form method="POST" action="/">
+                <input type="text" name="game" placeholder="Game title">
+                <input type="text" name="genre" placeholder="Genre">
+                <select name="status">
+                    <option value="Want">Want</option>
+                    <option value="Playing">Playing</option>
+                    <option value="Played">Played</option>
+                </select>
+                <input type="number" step="0.1" name="rating" placeholder="Rating (1–10)">
+                <button type="submit">Add Game</button>
+            </form>
+        </div>
+
+        <!-- Library Section -->
+        <div class="library-section">
+            <h2>Your Library</h2>
+
+            {% for game in game_list %}
+                <div class="game-card">
+                    <div class="game-info">
+                        <p class="game-title">
+                            {{ game[1] }}
+                            {% if game[3] == "Playing" %}
+                                <span class="badge badge-playing">Playing</span>
+                            {% elif game[3] == "Played" %}
+                                <span class="badge badge-completed">Played</span>
+                            {% else %}
+                                <span class="badge badge-backlog">Want</span>
+                            {% endif %}
+                        </p>
+                        <p class="game-genre">
+                            {{ game[2] if game[2] else "Unknown genre" }}
+                            {% if game[4] %} &nbsp;·&nbsp; Rating: {{ game[4] }}/10 {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="/edit/{{ game[0] }}">
+                            <button type="button" class="button-secondary">Edit</button>
+                        </a>
+                        <form method="POST" action="/delete" style="margin: 0;">
+                            <input type="hidden" name="game_id" value="{{ game[0] }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if not game_list %}
+                <p style="text-align: center; color: #a0a0b0; padding: 20px;">
+                    No games yet — add one above!
+                </p>
+            {% endif %}
+        </div>
+
+        <script>
+            function autofill(name, genre) {
+                document.querySelector('input[name="game"]').value = name;
+                document.querySelector('input[name="genre"]').value = genre;
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,291 @@
+html<!DOCTYPE html> #just tells the browser "this is an HTML file." Always the first line, never changes.
+<html>
+    <head># metadata about the page. Things the browser needs to know but the user doesn't
+    #see, like the page title, links to CSS files, etc.
+
+    </head>
+    <body>#everything the user actually sees on the page lives here.
+
+    </body>
+</html>
+----------------- above is the skeleton of all HTML structure--------------------------------
+HTML is built from tags. Almost every tag has an opening and closing pair:
+<h1>Welcome to GameTracker</h1> #<h1> opens it, </h1> closes it. Whatever is between them is
+#affected by that tag.
+
+<title> — sets the name shown on the browser tab
+<h1> through <h6> — headings, largest to smallest
+<p> — paragraph, normal body text
+<form> — creates a form for user input
+<input> — a text field for the user to type in
+<button> — a clickable button
+
+----------------------------current example------------------------------------------------
+<!DOCTYPE html>
+<html>#The root tag. Everything in your page lives inside this.
+    <head>
+        <title>GameTracker</title>#sets what appears on the browser tab.
+    </head>
+    <body>#everything from down here is what the user actually sees on the page
+        <h1>Welcome to GameTracker</h1>#biggest heading level
+   <form method="POST">#Creates a form
+   #a form is just a way for a user to send data to your server through the browser.
+   #The method="POST" tells the browser to send the form data as a POST request when submitted
+   #GET — fetching/retrieving data from the server. Just asking for something,
+   #By default flask only accepts GET so you need to add POST to that list.
+   #@app.route('/',methods = ["GET","POST"])
+#POST — sending data to the server. Like submitting a form with a game title.
+        <input type="text" name="game" placeholder="Enter a game">
+        #A text field. Three things happening here:
+        #type="text" — makes it a text input box
+        #name="game" — this is how Flask identifies it.
+        #[used in the python program] - new_game = request.form["game"]
+        #placeholder="Enter a game" — the grey hint text inside the box before the user types anything
+        <button type="submit">Add Game</button>#A button that submits the form when clicked.
+        #type="submit" is what triggers the POST request.
+    </form>
+
+    {% for game in games %}#Jinja2 loop — iterates over the games list passed in from Python
+    #and renders each one as a paragraph.
+    #[used in python program] - games = ["Elden Ring","Halo","Fifa"]
+        <p>{{ game }}</p>#take whatever value game holds right now and print it here.
+    {% endfor %}#This closes the for loop.
+    #{{ }} — for displaying values
+    #{% %} — for logic like loops and conditionals
+    </body>
+</html>
+
+---------------------------------updated for loop----------------------------------------------------------------
+
+    {% for game in game_list %} # for loop
+        <p>{{ game[1]}} - {{game[2]}} - {{game[3]}}  {{game[4] }}</p> indexes into the specific columns
+        #[0] id [1] name [2] genre [3] status [4] rating
+
+-------------------------------- added delete route--------------------------------------------------------------
+        <form method="POST" action="/delete"> # creates form that sends post
+        #action=/delete tells the form where to send the data, send to the /delete route
+            <input type="hidden" name="game_id" value="{{ game[0] }}"> #type="hidden" means this input is invisible
+            #to the users on the page,
+            #so <input type="hidden" name="game_id" value="{{ game[0] }}"> send the games id silently to the /delete route
+            <button type="submit">Delete</button> # creates a delete button that triggers the post
+-----------------------------added hyperlink to edit route-------------------------------------------------------
+        </form>
+        <a href="/edit/{{ game[0] }}">Edit</a> # <a> is an anchor tag, just a clickable link in html
+        #href is where the link points to
+        #/edit/ is the route
+        #{{game[0]}} is printing out the games id
+        #when clicking on the link routes to for example 3rd game would route you to the database for /edit/3
+    {% endfor %}
+
+    --------------------------------------edit.html--------------------------------------------------------------------
+    <!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit Game</title>
+    </head>
+    <body>
+        <h1>Edit Game</h1>
+        <form method="POST" action="/update">
+            <input type="hidden" name="game_id" value="{{ game[0] }}">
+            <input type="text" name="game" value="{{ game[1] }}">
+            <input type="text" name="genre" value="{{ game[2] }}">
+            <select name="status">
+                <option value="Want" {% if game[3] == "Want" %}selected{% endif %}>Want</option>
+                <option value="Playing" {% if game[3] == "Playing" %}selected{% endif %}>Playing</option>
+                <option value="Played" {% if game[3] == "Played" %}selected{% endif %}>Played</option>
+                #{% if game[3] == "Want" %} #start of if statement
+                #selected - what was selected previously
+                #{% endif %} end if statement
+                #Want is the actual text
+
+            </select>
+            <input type="number" step="0.1" name="rating" value="{{ game[4] }}">
+            <button type="submit">Update Game</button>
+        </form>
+        <a href="/">Cancel</a>
+    </body>
+</html>
+
+--------------------------------------adding search feature-----------------------------------------------------
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GameTracker</title>
+    </head>
+    <body>
+        <h1>Welcome to GameTracker</h1>
+        <form method="GET" action="/search"> # create GET form, send to /search route
+        <input type="text" name="query" placeholder="Search Game"> # create input box, accepts text, name query,
+         hint search game
+            <button type="submit">Search</button> # create search button
+        </form>
+---------------------------------adding javascript auto fill function-------------------------------------------------------
+        {% if results %} # start if statement
+        {% for game in results %} # loop through results in return render_template('index.html', results=results)
+        <p onclick="autofill('{{ game.name }}','{{ game.genres[0].name if game.genres else ''}}')" #javascript function.
+        called autofill() and passes it two arguments — the game's name and genre.
+           style="cursor:pointer; color:blue;"> #css line that makes below blue
+           {{ game.name }} - {{ game.genres[0].name if game.genres else "Uknown" }}
+        </p>
+        {% endfor %}
+        {% endif %}
+        {% if error %}
+        <p> {{ error }}</p> displays error message from
+        return render_template('index.html', result=[],error='Search failed, please try again.')
+        {% endif %}
+
+
+-----------------------------------actual javascript--------------------------------------------------------------------
+    <script> #java script below for auto fill
+        function autofill(name, genre) {
+            document.querySelector('input[name="game"]').value = name;
+            document.querySelector('input[name="genre"]').value = genre;
+
+
+
+        }
+    </script>
+----------------------------------adding subtitle-------------------------------------------------------------
+ <h1>GameTracker</h1>
+        <p class="subtitle">your personal game library</p>
+----------------------------------adding game cards-------------------------------------------------------------
+{% for game in game_list %}
+                <div class="game-card"> # creating container
+                    <div class="game-info"> #creating container
+                        <p class="game-title"> #using a <p> block instead of div to apply directly for this blocks text
+                            {{ game[1] }}
+                            {% if game[3] == "Playing" %}
+                                <span class="badge badge-playing">Playing</span> # span is an inline container meaning
+                                # on the same line, two classes are applied here:badge and badge-playing
+                                #badge is created here to adjust form of text and badge-playing is here to adjust style
+                            {% elif game[3] == "Played" %}
+                                <span class="badge badge-completed">Played</span>
+                            {% else %}
+                                <span class="badge badge-backlog">Want</span>
+                            {% endif %}
+                        </p>
+                        <p class="game-genre">
+                            {{ game[2] if game[2] else "Unknown genre" }}
+                            {% if game[4] %} &nbsp;·&nbsp; Rating: {{ game[4] }}/10 {% endif %}
+                            #&nbsp is just a white space,.&nbsp would be " . " so the full would be
+                            # platformer . Rating 5/10
+                        </p>
+                    </div>
+                    <div class="card-actions"># creating container for buttons edit and delete
+                        <a href="/edit/{{ game[0] }}">
+                            <button type="button" class="button-secondary">Edit</button>
+                        </a>
+                        <form method="POST" action="/delete" style="margin: 0;">
+                            <input type="hidden" name="game_id" value="{{ game[0] }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+------------------------------------------end results-------------------------------------------------------------------
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GameTracker</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='gamecards.css') }}">
+    </head>
+    <body>
+        <h1>GameTracker</h1>
+        <p class="subtitle">your personal game library</p>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <h2>Search IGDB</h2>
+            <form method="GET" action="/search">
+                <input type="text" name="query" placeholder="Search for a game...">
+                <button type="submit">Search</button>
+            </form>
+
+            {% if error %}
+                <p style="color: #ff6b81; margin-top: 10px;">{{ error }}</p>
+            {% endif %}
+
+            {% if results %}
+                <div style="margin-top: 14px;">
+                    {% for game in results %}
+                        <div class="game-card"
+                             onclick="autofill('{{ game.name }}', '{{ game.genres[0].name if game.genres else '' }}')"
+                             style="cursor: pointer;">
+                            <div class="game-info">
+                                <p class="game-title">{{ game.name }}</p>
+                                <p class="game-genre">{{ game.genres[0].name if game.genres else "Unknown genre" }}</p>
+                            </div>
+                            <div class="card-actions">
+                                <button type="button">+ Add</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Add Game Section -->
+        <div class="add-section">
+            <h2>Add Game Manually</h2>
+            <form method="POST" action="/">
+                <input type="text" name="game" placeholder="Game title">
+                <input type="text" name="genre" placeholder="Genre">
+                <select name="status">
+                    <option value="Want">Want</option>
+                    <option value="Playing">Playing</option>
+                    <option value="Played">Played</option>
+                </select>
+                <input type="number" step="0.1" name="rating" placeholder="Rating (1–10)">
+                <button type="submit">Add Game</button>
+            </form>
+        </div>
+
+        <!-- Library Section -->
+        <div class="library-section">
+            <h2>Your Library</h2>
+
+            {% for game in game_list %}
+                <div class="game-card">
+                    <div class="game-info">
+                        <p class="game-title">
+                            {{ game[1] }}
+                            {% if game[3] == "Playing" %}
+                                <span class="badge badge-playing">Playing</span>
+                            {% elif game[3] == "Played" %}
+                                <span class="badge badge-completed">Played</span>
+                            {% else %}
+                                <span class="badge badge-backlog">Want</span>
+                            {% endif %}
+                        </p>
+                        <p class="game-genre">
+                            {{ game[2] if game[2] else "Unknown genre" }}
+                            {% if game[4] %} &nbsp;·&nbsp; Rating: {{ game[4] }}/10 {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="/edit/{{ game[0] }}">
+                            <button type="button" class="button-secondary">Edit</button>
+                        </a>
+                        <form method="POST" action="/delete" style="margin: 0;">
+                            <input type="hidden" name="game_id" value="{{ game[0] }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if not game_list %}
+                <p style="text-align: center; color: #a0a0b0; padding: 20px;">
+                    No games yet — add one above!
+                </p>
+            {% endif %}
+        </div>
+
+        <script>
+            function autofill(name, genre) {
+                document.querySelector('input[name="game"]').value = name;
+                document.querySelector('input[name="genre"]').value = genre;
+            }
+        </script>
+    </body>
+</html>
